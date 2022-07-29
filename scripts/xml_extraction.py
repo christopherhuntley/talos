@@ -12,7 +12,7 @@
 # - The `$DEST` variable is a directory path for storing the files
 # - TODO: Allow overrides from environment variables
 
-# In[35]:
+# In[ ]:
 
 
 get_ipython().run_cell_magic('bash', '', 'CYEAR=`date +"%Y"`\nDEST=./990data/raw/\nfor y in $(seq 2015 $CYEAR); do\n    PART=1\n    COMPLETE=0\n    until [ $COMPLETE -eq 1 ]; do\n        URL="https://apps.irs.gov/pub/epostcard/990/xml/${y}/download990xml_${y}_${PART}.zip"\n        wget -q -N $URL -P $DEST\n        if head $DEST/download990xml_${y}_${PART}.zip | grep -q html; then\n            COMPLETE=1\n            rm -f $DEST/download990xml_${y}_${PART}.zip\n        else\n            echo "Updating/Downloading $URL"\n        fi\n        ((PART++))\n    done\ndone\n')
@@ -29,7 +29,7 @@ get_ipython().run_cell_magic('bash', '', 'CYEAR=`date +"%Y"`\nDEST=./990data/raw
 # - rebuilds the entire lake from scratch
 # - handles all data formats, one at a time
 
-# In[64]:
+# In[ ]:
 
 
 from pathlib import Path
@@ -238,7 +238,7 @@ def export_to_json(data_tree,year,part, zipmode="w"):
 
 # -------------------- Main code --------------------------------
 # process each zipped xml file in the raw downloads directory
-for zf_path in sorted(list(raw_zips_dir.glob('./*.zip')))[:1]:
+for zf_path in sorted(list(raw_zips_dir.glob('./*.zip'))):
     
     # extract the year from the zf_path
     year = zf_path.name.split("_")[1]
@@ -270,6 +270,12 @@ for zf_path in sorted(list(raw_zips_dir.glob('./*.zip')))[:1]:
         
         
         
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
