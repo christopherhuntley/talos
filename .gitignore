@@ -1,1 +1,3 @@
 *.zip
+tmp
+*checkpoint.ipynb
