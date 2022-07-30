@@ -29,7 +29,7 @@ get_ipython().run_cell_magic('bash', '', 'CYEAR=`date +"%Y"`\nDEST=./990data/raw
 # - rebuilds the entire lake from scratch
 # - handles all data formats, one at a time
 
-# In[ ]:
+# In[4]:
 
 
 from pathlib import Path
@@ -38,6 +38,14 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import csv
 import json
+
+# ----------------- Logging ----------------------------------------------
+import logging
+logger = logging.getLogger()
+fhandler = logging.FileHandler(filename='test_log.log', mode='a')
+logger.addHandler(fhandler)
+logger.setLevel(logging.INFO)
+logging.debug("test")
 
 # -------------- Constants / Environment Vars-----------------------------
 # Namespace for XML parsing
@@ -70,7 +78,7 @@ def coalesce(*values):
     """Return the first non-None value or None if all values are None"""
     # src: https://gist.githubusercontent.com/onelharrison/37a1d153246a5e1d2336c444f05522a6/raw/3075d414eee9d45a6558513bcd33f4a266b57e77/coalesce.py
     
-    return next((v for v in values if v is not None), None)
+    return next((v for v in values if v is not None and v != ''), None)
 
 # ----------- XML Parser functions for various parts of the return --------------- 
         
@@ -219,9 +227,10 @@ def export_to_csv(data_tree,year,part,zipmode="w"):
     # export to zipfile
     fname = "IRS990_csv_" + str(year)+ "_part_"+ str(part) + ".zip"
     with zipfile.ZipFile(csv_dir / fname, mode=zipmode, compression = zipfile.ZIP_DEFLATED) as outzip:
-        outzip.write("tmp/returns.csv")
-        outzip.write("tmp/officers.csv")
-        outzip.write("tmp/grants.csv")
+        prefix = "IRS990_csv_" + str(year)+ "_part_"+ str(part)+"_"
+        outzip.write("tmp/returns.csv",prefix+"returns.csv")
+        outzip.write("tmp/officers.csv",prefix+"officers.csv")
+        outzip.write("tmp/grants.csv",prefix+"grants.csv")
     
 
 def export_to_json(data_tree,year,part, zipmode="w"):
@@ -233,7 +242,8 @@ def export_to_json(data_tree,year,part, zipmode="w"):
     
     fname = "IRS990_json_" + str(year)+ "_part_"+ str(part) + ".zip"
     with zipfile.ZipFile(json_dir / fname, mode=zipmode, compression = zipfile.ZIP_DEFLATED) as outzip:
-        outzip.write("tmp/returns.json")
+        prefix = "IRS990_json_" + str(year)+ "_part_"+ str(part)+"_"
+        outzip.write("tmp/returns.json", prefix + "returns.json")
    
 
 # -------------------- Main code --------------------------------
